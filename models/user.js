@@ -52,6 +52,13 @@ class User {
 		})
 	}
 
+	toJSON() {
+		return {
+			id: this.id,
+			name: this.name
+		}
+	}
+
 	static getByName(name, cb) {
 		User.getId(name, (err, id) => {
 			if(err) return cb(err);

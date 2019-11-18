@@ -7,12 +7,16 @@ var session = require("express-session");
 var validate = require("./middleware/validate");
 var messages = require("./middleware/messages");
 var user = require("./middleware/user");
+var page = require("./middleware/page");
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var entriesRouter = require('./routes/entries');
 var registerRouter = require('./routes/register');
 var loginRouter = require('./routes/login');
+var apiRouter = require('./routes/api');
+
+var Entry = require("./models/entry");
 
 var app = express();
 
@@ -30,6 +34,7 @@ app.use(session({
 	saveUninitialized: true
 }));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use("/api", apiRouter.auth);
 app.use(user);
 app.use(messages);
 
@@ -44,6 +49,10 @@ app.post("/register", registerRouter.submit);
 app.get("/login", loginRouter.form);
 app.post("/login", loginRouter.submit);
 app.get("/logout", loginRouter.logout);
+// api
+app.get("/api/user/:id", apiRouter.user);
+app.post("/api/entry", entriesRouter.submit);
+app.get("/api/entries/:page?", page(Entry.count), apiRouter.entries);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

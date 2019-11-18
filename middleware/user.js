@@ -1,6 +1,10 @@
 var User = require("../models/user");
 
 module.exports = (req, res, next) => {
+	if(req.remoteUser) {
+		res.locals.user = req.remoteUser;
+	}
+
 	var uid = req.session.uid;
 
 	if(!uid) return next();
